@@ -147,7 +147,7 @@ You will see all api_access_url that be allowed pass to client.request:
 
    >>> fanfou.print_api('plain')
 
-If you tpye the line and watch the results carefully, you will find some api_access_api have *'/:id'*, they are:
+If you type the line and watch the results carefully, you will find some api_access_api have *'/:id'*, they are:
 
 * `GET /users/show <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.show>`_
 * `POST /favorites/destroy <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/favorites.destroy>`_
