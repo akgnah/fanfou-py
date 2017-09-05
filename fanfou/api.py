@@ -150,6 +150,7 @@ def print_api(mode='plain'):
                 tmp.append('client.%s.%s' % (group, cut(api)))
         print('\n'.join(tmp))
 
+
 if __name__ == '__main__':
     print_api('plain')
     print()
