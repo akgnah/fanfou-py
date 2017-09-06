@@ -96,12 +96,19 @@ Way 1:
    >>> resp = client.request('/statuses/update', 'POST', body)
    >>> print(resp.code)
    >>> 
-   >>> body, headers = fanfou.pack_image('test.jpg', 'upload local photo test')
+   >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
+   >>> body, headers = fanfou.pack_image(args)
+   >>> print(resp.code)
+   >>> 
+   >>> args = {'photo': 'http://static2.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
+   >>> body, headers = fanfou.pack_image(args)
    >>> resp = client.request('/photos/upload','POST', body, headers)
    >>> print(resp.code)
    >>> 
-   >>> body, headers = fanfou.pack_image('http://static2.fanfou.com/img/fanfou.png', 'upload online photo test')
-   >>> resp = client.request('/photos/upload','POST', body, headers)
+   >>> # update_profile_image
+   >>> args = {'image': 'test.jpg', 'mode': 'lite'}
+   >>> body, headers = fanfou.pack_image(args)
+   >>> resp = client.request('/account/update_profile_image','POST', body, headers)
    >>> print(resp.code)
 
 Way 2:
@@ -123,12 +130,20 @@ Way 2:
    >>> resp = client.statuses.update(body)
    >>> print(resp.code)
    >>>  
-   >>> body, headers = fanfou.pack_image('test.jpg', 'upload local photo')
+   >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
+   >>> body, headers = fanfou.pack_image(args)
    >>> resp = client.photos.upload(body, headers)
    >>> print(resp.code)
    >>> 
-   >>> body, headers = fanfou.pack_image('http://static2.fanfou.com/img/fanfou.png', 'upload online photo test')
+   >>> args = {'photo': 'http://static2.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
+   >>> body, headers = fanfou.pack_image(args)
    >>> resp = client.photos.upload(body, headers)
+   >>> print(resp.code)
+   >>> 
+   >>> # update_profile_image
+   >>> args = {'image': 'http://static2.fanfou.com/img/fanfou.png', 'mode': 'lite'}
+   >>> body, headers = fanfou.pack_image(args)
+   >>> resp = client.account.update_profile_image(body, headers)
    >>> print(resp.code)
 
 You will see that *client.statuses.home_timeline()* and *client.request('/statuses/home_timeline', 'GET')* are equal after **fanfou.bound(client)**, etc.

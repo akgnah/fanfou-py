@@ -13,20 +13,24 @@ def open_image(filename):
     return image.read()
 
 
-def pack_image(filename, status=None, binary=None):
-    'binary used for web form'
+def pack_image(args, binary=None):  # 'binary used for web form'
+    if not isinstance(args, dict):
+        raise Exception('TypeError: argument args: expected a dict')
+
     # build the mulitpart-formdata body
-    BOUNDARY = str(random.random())
     body = []
-    if status:
+    name = 'photo' if args.get('photo') else 'image'
+    filename = args.pop(name)
+    BOUNDARY = str(random.random())
+    for key, value in args.items():
         body.append('--' + BOUNDARY)
-        body.append('Content-Disposition: form-data; name="status"')
+        body.append('Content-Disposition: form-data; name="%s"' % key)
         body.append('Content-Type: text/plain; charset=US-ASCII')
         body.append('Content-Transfer-Encoding: 8bit')
         body.append('')
-        body.append(status)
+        body.append(value)
     body.append('--' + BOUNDARY)
-    body.append('Content-Disposition: form-data; name="photo"; filename="%s"' % filename)
+    body.append('Content-Disposition: form-data; name="%s"; filename="%s"' % (name, filename))
     body.append('Content-Type: %s' % mimetypes.guess_type(filename)[0])
     body.append('Content-Transfer-Encoding: binary')
     body.append('')
@@ -45,5 +49,12 @@ def pack_image(filename, status=None, binary=None):
     return {'form-data': body}, headers
 
 
-# body, headers = pack_image('test.jpg', '#test#')
-# client.request('/photos/upload', 'POST', body, headers)
+'''
+args = {'photo': 'test.jpg', 'status': 'upload photo'}
+body, headers = pack_image(args)
+client.request('/photos/upload', 'POST', body, headers)
+
+args = {'image': 'test.jpg', 'mode': 'lite'}
+body, headers = pack_image(args)
+client.request('/account/update_profile_image', 'POST', body, headers)
+'''
