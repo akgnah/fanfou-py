@@ -98,6 +98,7 @@ Way 1:
    >>> 
    >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
    >>> body, headers = fanfou.pack_image(args)
+   >>> resp = client.request('/photos/upload','POST', body, headers)
    >>> print(resp.code)
    >>> 
    >>> args = {'photo': 'http://static2.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
