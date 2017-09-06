@@ -170,7 +170,7 @@ The args that you put on body will be passed to api_access_url, all available ar
 .. code-block:: python
 
    >>> body = {'page': 2, 'count': 20, 'mode': 'lite'}
-   >>> resp = client.request(/statuses/home_timeline', 'GET', body)
+   >>> resp = client.request('/statuses/home_timeline', 'GET', body)
    >>> data = json.loads(resp.read())
    >>> for item in data:
    >>>     print(item['text'])
