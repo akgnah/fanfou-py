@@ -160,7 +160,7 @@ Because these API need user_id on it's access_url, so we get user_id from body a
 
    >>> body = {'id': 'home2'}
    >>> resp = client.request('/users/show/:id', 'GET', body)
-   >>> data = json.loads(resp.read())    # if Python3, resp.read().decode('utf8')
+   >>> data = json.loads(resp.read())  # Python3: data = json.loads(resp.read().decode('utf8'))
    >>> print(data)
 
 The api_access_url will become http://api.fanfou.com/users/show/home2.json (try browse it). Forget to mention that we will append '.json' to end of the access_url.
@@ -171,7 +171,7 @@ The args that you put on body will be passed to api_access_url, all available ar
 
    >>> body = {'page': 2, 'count': 20, 'mode': 'lite'}
    >>> resp = client.request('/statuses/home_timeline', 'GET', body)
-   >>> data = json.loads(resp.read())
+   >>> data = json.loads(resp.read())  # Python3: data = json.loads(resp.read().decode('utf8'))
    >>> for item in data:
    >>>     print(item['text'])
 
