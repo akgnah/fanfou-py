@@ -49,7 +49,7 @@ APIs_all = {
     ),
     'favorites': (
         ('destroy/:id', 'POST'),
-        ('list/:id', 'GET'),  # list not in api path
+        (':id', 'GET'),  # list
         ('create/:id', 'POST'),
     ),
     'friendships': (
@@ -108,13 +108,13 @@ def signed(client, apis, function, http_method):
 def fix_apis_key(client):
     client.users.show = client.users.__dict__.pop('show/:id')
     client.favorites.destroy = client.favorites.__dict__.pop('destroy/:id')
-    client.favorites.list = client.favorites.__dict__.pop('list/:id')
     client.favorites.create = client.favorites.__dict__.pop('create/:id')
 
 
 def fix_favorites(client):
     class APIs_fix(APIs):
         def __init__(self):
+            del client.favorites.__dict__[':id']
             self.__dict__.update(client.favorites.__dict__)
 
         def __call__(self, http_args={}, headers={}):
@@ -135,7 +135,7 @@ def bound(client):
 
 def print_api(mode='plain'):
     def cut(s):
-        return ''.join(s.split('/')[:-1]) if '/' in s else s
+        return (s[:-4] or 'list') if s.endswith(':id') else s
 
     if mode == 'plain':
         tmp = []

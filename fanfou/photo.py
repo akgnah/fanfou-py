@@ -13,7 +13,7 @@ def open_image(filename):
     return image.read()
 
 
-def pack_image(args, binary=None):  # 'binary used for web form'
+def pack_image(args, binary=None):
     if not isinstance(args, dict):
         raise Exception('TypeError: argument args: expected a dict')
 

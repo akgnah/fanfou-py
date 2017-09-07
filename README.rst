@@ -19,7 +19,7 @@ Usage
 Step 1:  Authorize
 ^^^^^^^^^^^^^^^^^^
 
-We provide several ways to authorize, see more details on `Fanfou API OAuth <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Oauth>`_.
+The module provides several ways to authorize, see more details on `Fanfou API OAuth <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Oauth>`_.
 
 Way 1:
 """"""
@@ -77,43 +77,28 @@ Way 4:
 Step 2: Access API
 ^^^^^^^^^^^^^^^^^^
 
-We assume that you've got client on Step 1, and provide two ways to access API.
+We assume that you've got client on Step 1, now you have two styles to access API.
 
-Way 1:
-""""""
+Style 1:
+""""""""
 
 .. code-block:: python
 
    >>> import json
    >>> 
-   >>> resp = client.request('/statuses/home_timeline', 'GET')
+   >>> resp = client.request('/statuses/home_timeline', 'GET')  # resp is a HTTPResponse instance
    >>> print(resp.code)
    >>> data = json.loads(resp.read())    # Python3: data = json.loads(resp.read().decode('utf8'))
    >>> for item in data:
    >>>     print(item['text'])
    >>> 
-   >>> body = {'status': 'update status test'}
+   >>> body = {'status': 'update status test 1'}
    >>> resp = client.request('/statuses/update', 'POST', body)
    >>> print(resp.code)
-   >>> 
-   >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
-   >>> body, headers = fanfou.pack_image(args)
-   >>> resp = client.request('/photos/upload','POST', body, headers)
-   >>> print(resp.code)
-   >>> 
-   >>> args = {'photo': 'http://static2.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
-   >>> body, headers = fanfou.pack_image(args)
-   >>> resp = client.request('/photos/upload','POST', body, headers)
-   >>> print(resp.code)
-   >>> 
-   >>> # update_profile_image
-   >>> args = {'image': 'test.jpg', 'mode': 'lite'}
-   >>> body, headers = fanfou.pack_image(args)
-   >>> resp = client.request('/account/update_profile_image','POST', body, headers)
-   >>> print(resp.code)
 
-Way 2:
-""""""
+
+Style 2:
+""""""""
 
 .. code-block:: python
 
@@ -121,43 +106,64 @@ Way 2:
    >>>  
    >>> fanfou.bound(client)    # Note the line
    >>> 
+   >>> body = {'page': 2, 'count': 20, 'mode': 'lite'}
    >>> resp = client.statuses.home_timeline()
-   >>> print(resp.code)
    >>> data = json.loads(resp.read())    # Python3: data = json.loads(resp.read().decode('utf8'))
    >>> for item in data:
    >>>     print(item['text'])
    >>> 
-   >>> body = {'status': 'update status test'}
+   >>> body = {'status': 'update status test 2'}
    >>> resp = client.statuses.update(body)
    >>> print(resp.code)
-   >>>  
-   >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
-   >>> body, headers = fanfou.pack_image(args)
-   >>> resp = client.photos.upload(body, headers)
-   >>> print(resp.code)
-   >>> 
-   >>> args = {'photo': 'http://static2.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
-   >>> body, headers = fanfou.pack_image(args)
-   >>> resp = client.photos.upload(body, headers)
-   >>> print(resp.code)
-   >>> 
-   >>> # update_profile_image
-   >>> args = {'image': 'http://static2.fanfou.com/img/fanfou.png', 'mode': 'lite'}
-   >>> body, headers = fanfou.pack_image(args)
-   >>> resp = client.account.update_profile_image(body, headers)
-   >>> print(resp.code)
 
-You will see that *client.statuses.home_timeline()* and *client.request('/statuses/home_timeline', 'GET')* are equal after **fanfou.bound(client)**, etc.
+If you want to use style 2, you must **fanfou.bound(client)** before use. They have the same effect, just two different styles.
+
+Just put all you want to request args to a dict (above is body), and then access a API. If you want to upload a photo, please see **pack_image**.
 
 You can see the all API details `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_.
+
 
 More details
 ^^^^^^^^^^^^
 
+pack_image(args, binary=None)
+"""""""""""""""""""""""""""""
+
+On `/account/update_profile_image <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/account.update-profile-image>`_
+and `/photos/upload <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/photos.upload>`_ you need to upload a image, **pack_image** can help you work easily.
+
+.. code-block:: python
+
+   >>> # update profile image
+   >>> args = {'image': 'test.jpg', 'mode': 'lite'}
+   >>> body, headers = fanfou.pack_image(args)
+   >>> resp = client.account.update_profile_image(body, headers)
+   >>> print(resp.code)
+   >>> 
+   >>> # upload photo
+   >>> args = {'photo': 'http://static2.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
+   >>> body, headers = fanfou.pack_image(args)
+   >>> resp = client.photos.upload(body, headers)
+   >>> print(resp.code)
+
+Just put the filename in the args, then pack_image it, and then you can access API. Image file can be local or network files, pack_image will auto read it.
+
+Sometimes you want to provide binary bytes instead of filename when you're writing a webapp, because the data you get from the form is binary. (like `m.setq.me <http://m.setq.me>`_)
+
+.. code-block:: python
+
+   >>> f = open('test.jpg')
+   >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
+   >>> body, headers = fanfou.pack_image(args, binary=f.read())  # Note the line
+   >>> f.close()
+   >>> resp = client.photos.upload(body, headers)
+   >>> print(resp.code)
+
+
 print_api('plain')
 """"""""""""""""""
 
-You will see all api_access_url that be allowed pass to client.request:
+The following code print all api_access_url that be allowed pass to client.request:
 
 .. code-block:: python
 
@@ -179,17 +185,8 @@ Because these API need user_id on it's access_url, so we get user_id from body a
    >>> data = json.loads(resp.read())  # Python3: data = json.loads(resp.read().decode('utf8'))
    >>> print(data)
 
-The api_access_url will become http://api.fanfou.com/users/show/home2.json (try browse it). Forget to mention that we will append '.json' to end of the access_url.
+The api_access_url will become http://api.fanfou.com/users/show/home2.json (try browse it). Forget to mention that '.json' will add to the access_url.
 
-The args that you put on body will be passed to api_access_url, all available args see `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_.
-
-.. code-block:: python
-
-   >>> body = {'page': 2, 'count': 20, 'mode': 'lite'}
-   >>> resp = client.request('/statuses/home_timeline', 'GET', body)
-   >>> data = json.loads(resp.read())  # Python3: data = json.loads(resp.read().decode('utf8'))
-   >>> for item in data:
-   >>>     print(item['text'])
 
 print_api('bound')
 """"""""""""""""""
@@ -198,11 +195,18 @@ print_api('bound')
 
    >>> fanfou.print_api('bound')
 
-The line like *fanfou.print_api('plain')* but it will print all available methods that like client.statuses.home_timeline().
+The line like *fanfou.print_api('plain')* but it will print all available methods that like client.statuses.home_timeline.
 
-Your IDE (or editor) can autocomplete them after fanfou.bound(client).
+Your IDE (or editor) can autocomplete them after **fanfou.bound(client)**.
 
-You also can pass args by a dict.
+auth class
+""""""""""
+
+The module provides the following classes to authorize:
+
+class **OAuth** (oauth_consumer, oauth_token={}, callback=None, auth_host='m.fanfou.com')
+
+class **XAuth** (oauth_consumer, username, password)
 
 Thanks
 ------
