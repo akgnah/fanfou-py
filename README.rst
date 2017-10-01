@@ -128,9 +128,9 @@ More API details on `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFou
    >>> fanfou.bound(client)
    >>> 
    >>> resp = client.users.show()
-   >>> print(resp.json())
+   >>> data = resp.json()    # Equal: data = json.loads(resp.read().decode('utf8')) 
 
-In this update, you can get a Python object directly by using resp.json(). Note that resp.json() is only available in style 2.
+In this update, you can get a Python object directly by using resp.json(). Note that the syntactic sugar is only available in style 2.
 
 
 More details
