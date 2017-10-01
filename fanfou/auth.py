@@ -64,7 +64,7 @@ class Auth(object):
                 auth_header += ', %s="%s"' % (k, oauth_escape(v))
         return {'Authorization': auth_header}
 
-    def oauth_request(self, http_url, http_method, http_args={}, headers={}):
+    def oauth_request(self, http_url, http_method='GET', http_args={}, headers={}):
         base_args = {
             'oauth_consumer_key': self.oauth_consumer['key'],
             'oauth_signature_method': 'HMAC-SHA1',
@@ -78,7 +78,10 @@ class Auth(object):
         if http_url.startswith('/'):
             if ':' in http_url:
                 path, argv = http_url.split(':')
-                http_url = path + http_args.get(argv)
+                if http_args.get(argv):
+                    http_url = path + http_args.get(argv)
+                else:
+                    http_url = path[:-1]
             http_url = self.base_api_url % http_url
 
         if http_method == 'POST':

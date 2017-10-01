@@ -27,7 +27,7 @@ Way 1:
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
-   >>> client = fanfou.OAuth(consumer)     # (1)(2)
+   >>> client = fanfou.OAuth(consumer)    # (1)(2)
    >>> request_token = client.request_token()
    >>> print(client.authorize_url)    # browse the url to authorize
    >>> access_token = client.access_token()    # done. keep the access_token
@@ -121,6 +121,17 @@ If you want to use style 2, you must **fanfou.bound(client)** before use. They h
 Just put all you want to request args to a dict (above is body), and then access a API. If you want to upload a photo, please see **pack_image**.
 
 You can see the all API details `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_.
+
+**What's new in 0.1.7**
+
+.. code-block:: python
+
+   >>> fanfou.bound(client)
+   >>> 
+   >>> resp = client.users.show()
+   >>> print(resp.json())
+
+In this update, you can get a json directly by using resp.json(). Note that resp.json() is only available in style 2.
 
 
 More details
