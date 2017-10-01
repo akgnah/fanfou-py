@@ -130,7 +130,7 @@ More API details on `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFou
    >>> resp = client.users.show()
    >>> print(resp.json())
 
-In this update, you can get a json directly by using resp.json(). Note that resp.json() is only available in style 2.
+In this update, you can get a Python object directly by using resp.json(). Note that resp.json() is only available in style 2.
 
 
 More details
