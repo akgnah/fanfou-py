@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import copy
-import json
-
 
 APIs_all = {
     'search': (
@@ -100,19 +97,10 @@ class APIs():
         return '<APIs ' + dict.__repr__(self.__dict__) + '>'
 
 
-def loads(resp):
-    try:
-        return json.loads(resp.read().decode('utf8'))
-    except:
-        return ''.encode('utf8')  # py2: <str>, py3: <bytes>
-
-
 def signed(client, apis, function, http_method):
     def request(http_args={}, headers={}):
         http_url = '/{}/{}'.format(apis.__group__, function)
-        resp = client.request(http_url, http_method, http_args, headers)
-        setattr(resp, 'json', lambda: loads(resp))
-        return resp
+        return client.request(http_url, http_method, http_args, headers)
     setattr(apis, function, request)
     setattr(client, apis.__group__, apis)
 
@@ -130,9 +118,8 @@ def fix_favorites(client):
             self.__dict__.update(client.favorites.__dict__)
 
         def __call__(self, http_args={}, headers={}):
-            resp = client.request('/favorites/:id', 'GET', http_args, headers)
-            setattr(resp, 'json', lambda: loads(resp))
-            return resp
+            return client.request('/favorites/:id', 'GET', http_args, headers)
+
     favorites = APIs_fix()
     setattr(favorites, 'list', favorites.__call__)
     setattr(client, 'favorites', favorites)

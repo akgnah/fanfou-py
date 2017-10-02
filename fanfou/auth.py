@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import six
-import time
 import hmac
+import json
+import time
+import random
 import hashlib
 import binascii
-import random
 from six.moves.urllib import parse
 from six.moves.urllib import request
 
@@ -110,8 +111,10 @@ class OAuth(Auth):
     def __init__(self, oauth_consumer, oauth_token={}, callback=None, auth_host='m.fanfou.com'):
         Auth.__init__(self, oauth_consumer, oauth_token, callback, auth_host)
 
-    def request(self, http_url, http_method, http_args={}, headers={}):
-        return self.oauth_request(http_url, http_method, http_args, headers)
+    def request(self, http_url, http_method='GET', http_args={}, headers={}):
+        resp = self.oauth_request(http_url, http_method, http_args, headers)
+        resp.json = lambda: json.loads(resp.read().decode('utf8') or '""')
+        return resp
 
     def request_token(self):
         resp = self.oauth_request(self.request_token_url, 'GET')
@@ -134,8 +137,10 @@ class XAuth(Auth):
         Auth.__init__(self, oauth_consumer)
         self.oauth_token = self.xauth(username, password)
 
-    def request(self, http_url, http_method, http_args={}, headers={}):
-        return self.oauth_request(http_url, http_method, http_args, headers)
+    def request(self, http_url, http_method='GET', http_args={}, headers={}):
+        resp = self.oauth_request(http_url, http_method, http_args, headers)
+        resp.json = lambda: json.loads(resp.read().decode('utf8') or '""')
+        return resp
 
     def xauth(self, username, password):
         http_args = {
