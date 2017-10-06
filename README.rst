@@ -1,5 +1,11 @@
-fanfou
-======
+fanfou-py: a python oauth client for fanfou
+===========================================
+
+.. image:: https://img.shields.io/pypi/v/fanfou.svg
+    :target: https://pypi.python.org/pypi/fanfou
+
+.. image:: https://img.shields.io/pypi/l/fanfou.svg
+    :target: https://pypi.python.org/pypi/fanfou
 
 Installation
 ------------
@@ -30,19 +36,21 @@ Way 1:
    >>> client = fanfou.OAuth(consumer)    # (1)(2)
    >>> request_token = client.request_token()
    >>> print(client.authorize_url)    # browse the url to authorize
-   >>> access_token = client.access_token()    # done. keep the access_token
+   >>> access_token = client.access_token()    # done
 
-(1). The default callback is `'http://localhost:8080'`.
+(1). The default callback is '`http://localhost:8080`'.
 
-(2). The default authorize_url is `'http://m.fanfou.com/...'`, you can pass auth_host='fanfou.com' to change it.
+(2). The default authorize_url is '`http://m.fanfou.com/`...', you can pass auth_host='fanfou.com' to change it.
 
-
-If your app is a webapp, maybe you got access_token on callback page, create a new client like that:
+Maybe you handling the callback elsewhere, create a new client and get access_token, like that:
 
 .. code-block:: python
 
    >>> client = fanfou.OAuth(consumer, request_token)
-   >>> access_token = client.access_token()    # done.
+   >>> access_token = client.access_token()    # done
+   >>> # or
+   >>> client = fanfou.OAuth(consumer)
+   >>> access_token = client.access_token(request_token)    # done
 
 Way 2:
 """"""
@@ -54,7 +62,9 @@ Way 2:
    >>> request_token = client.request_token()
    >>> print(client.authorize_url)    # browse the url and copy verifier_code
    >>> verifier_code = 'your verifier_code'
-   >>> access_token = client.access_token(oauth_verifier=verifier_code)    # done. keep the access_token
+   >>> access_token = client.access_token(oauth_verifier=verifier_code)    # done
+
+You can also create a new client and get access_token, like the way 1 above.
 
 Way 3:
 """"""
@@ -62,7 +72,7 @@ Way 3:
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
-   >>> access_token =  {'key': 'your key', 'secret': 'your secret'}    # if you have a access_token
+   >>> access_token =  {'key': 'your key', 'secret': 'your secret'}    # access_token is what you saved before
    >>> client = fanfou.OAuth(consumer, access_token)    # done
 
 Way 4:
@@ -71,7 +81,8 @@ Way 4:
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
-   >>> client = fanfou.XAuth(consumer, 'username', 'password')    # done.
+   >>> client = fanfou.XAuth(consumer, 'username', 'password')    # done
+   >>> access_token = client.access_token()    # optional, if you want to save access_token
 
 
 Step 2: Access API
@@ -121,7 +132,7 @@ If you want to use style 2, you must **fanfou.bound(client)** before use. They h
 Just put all you want to request args to a dict (above is body), and then access a API. If you want to upload a photo, please see **pack_image**.
 More API details on `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_.
 
-**What's new in 0.1.8**
+**What's new in 0.1.9**
 
 .. code-block:: python
 
@@ -148,15 +159,16 @@ and `/photos/upload <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/photos.uploa
    >>> args = {'image': 'test.jpg', 'mode': 'lite'}
    >>> body, headers = fanfou.pack_image(args)
    >>> resp = client.account.update_profile_image(body, headers)
+   >>> # or, resp = client.request('/account/update_profile_image', 'POST', body, headers)
    >>> print(resp.code)
    >>> 
    >>> # upload photo
-   >>> args = {'photo': 'http://static2.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
+   >>> args = {'photo': 'http://static.fanfou.com/img/fanfou.png', 'status': 'upload online photo'}
    >>> body, headers = fanfou.pack_image(args)
    >>> resp = client.photos.upload(body, headers)
    >>> print(resp.code)
 
-Just put the filename in the args, then pack_image it, and then you can access API. Image file can be local or network files, pack_image will auto read it.
+Just put the filename in the args, then pack_image it, and then you can access API. The image file can be local or network file, pack_image will auto read it.
 
 Sometimes you want to provide binary bytes instead of filename when you're writing a webapp, because the data you get from the form is binary. (like `m.setq.me <http://m.setq.me>`_)
 
@@ -179,23 +191,20 @@ The following code print all api_access_url that be allowed pass to client.reque
 
    >>> fanfou.print_api('plain')
 
-If you type the line and watch the results carefully, you will find some api_access_api have *'/:id'*, they are:
+If you type the line and watch the results carefully, you will find two api_access_url have *'/:id'*, they are:
 
-* `GET /users/show <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/users.show>`_
 * `POST /favorites/destroy <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/favorites.destroy>`_
-* `GET /favorites <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/favorites>`_
 * `POST /favorites/create <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/favorites.create>`_
 
-Because these API need user_id on it's access_url, so we get user_id from body and replace :id, like that:
+Because these API need *id* on it's access_url, so we get id from body and replace :id, like that:
 
 .. code-block:: python
 
-   >>> body = {'id': 'home2'}
-   >>> resp = client.request('/users/show/:id', 'GET', body)
-   >>> data = json.loads(resp.read())  # Python3: data = json.loads(resp.read().decode('utf8'))
-   >>> print(data)
+   >>> body = {'id': 'zFbiu4CsJrw'}
+   >>> resp = client.request('/favorites/create/:id', 'POST', body)
+   >>> print(resp.url)
 
-The api_access_url will become http://api.fanfou.com/users/show/home2.json (try browse it). Forget to mention that '.json' will add to the access_url.
+You will see resp.url is http://api.fanfou.com/favorites/create/zFbiu4CsJrw.json (Forget to mention that '.json' will add to the access_url).
 
 
 print_api('bound')

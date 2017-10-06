@@ -15,15 +15,15 @@ APIs_all = {
     ),
     'users': (
         ('tagged', 'GET'),
-        ('show/:id', 'GET'),
+        ('show', 'GET'),
         ('tag_list', 'GET'),
         ('followers', 'GET'),
         ('recommendation', 'GET'),
-        ('cancel_recommendation', 'GET'),
+        ('cancel_recommendation', 'POST'),
         ('friends', 'GET'),
     ),
     'account': (
-        ('verify_credentials', 'POST'),
+        ('verify_credentials', 'GET'),
         ('update_profile_image', 'POST'),
         ('rate_limit_status', 'GET'),
         ('update_profile', 'POST'),
@@ -49,7 +49,7 @@ APIs_all = {
     ),
     'favorites': (
         ('destroy/:id', 'POST'),
-        (':id', 'GET'),  # list
+        ('#', 'GET'),
         ('create/:id', 'POST'),
     ),
     'friendships': (
@@ -97,58 +97,51 @@ class APIs():
         return '<APIs ' + dict.__repr__(self.__dict__) + '>'
 
 
-def signed(client, apis, function, http_method):
-    def request(http_args={}, headers={}):
-        http_url = '/{}/{}'.format(apis.__group__, function)
-        return client.request(http_url, http_method, http_args, headers)
-    setattr(apis, function, request)
+def signed(client, apis, func, method):
+    def request(args={}, headers={}):
+        url = '/{}/{}'.format(apis.__group__, func)
+        return client.request(url, method, args, headers)
+    setattr(apis, func, request)
     setattr(client, apis.__group__, apis)
 
 
-def fix_apis_key(client):
-    client.users.show = client.users.__dict__.pop('show/:id')
-    client.favorites.destroy = client.favorites.__dict__.pop('destroy/:id')
-    client.favorites.create = client.favorites.__dict__.pop('create/:id')
-
-
 def fix_favorites(client):
-    class APIs_fix(APIs):
+    class Favorites(APIs):
         def __init__(self):
-            del client.favorites.__dict__[':id']
+            del client.favorites.__dict__['#']
             self.__dict__.update(client.favorites.__dict__)
+            self.list = self.__call__
+            self.create = self.__dict__.pop('create/:id')
+            self.destroy = self.__dict__.pop('destroy/:id')
 
-        def __call__(self, http_args={}, headers={}):
-            return client.request('/favorites/:id', 'GET', http_args, headers)
+        def __call__(self, args={}, headers={}):
+            return client.request('/favorites', 'GET', args, headers)
 
-    favorites = APIs_fix()
-    setattr(favorites, 'list', favorites.__call__)
-    setattr(client, 'favorites', favorites)
+    client.favorites = Favorites()
 
 
 def bound(client):
-    for key, value in APIs_all.items():
-        apis = APIs(key)
+    for group, value in APIs_all.items():
+        apis = APIs(group)
         for item in value:
             signed(client, apis, *item)
-    fix_apis_key(client)
     fix_favorites(client)
 
 
 def print_api(mode='plain'):
-    def cut(s):
-        return (s[:-4] or 'list') if s.endswith(':id') else s
-
     if mode == 'plain':
         tmp = []
         for group, apis in APIs_all.items():
             for api, _ in apis:
-                tmp.append('/%s/%s' % (group, api))
+                api = api.replace('#', '')
+                tmp.append('/%s%s' % (group, api and '/' + api))
         print('\n'.join(tmp))
     else:
         tmp = []
         for group, apis in APIs_all.items():
             for api, _ in apis:
-                tmp.append('client.%s.%s' % (group, cut(api)))
+                api = api.replace('#', '').replace('/:id', '')
+                tmp.append('client.%s%s' % (group, api and '.' + api))
         print('\n'.join(tmp))
 
 
