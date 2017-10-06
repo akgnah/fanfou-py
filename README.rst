@@ -99,7 +99,7 @@ Style 1:
    >>> 
    >>> resp = client.request('/statuses/home_timeline', 'GET')  # resp is a HTTPResponse instance
    >>> print(resp.code)
-   >>> data = json.loads(resp.read())    # Python3: data = json.loads(resp.read().decode('utf8'))
+   >>> data = json.loads(resp.read())    # Python 3: data = json.loads(resp.read().decode('utf8'))
    >>> for item in data:
    >>>     print(item['text'])
    >>> 
@@ -115,11 +115,11 @@ Style 2:
 
    >>> import json
    >>>  
-   >>> fanfou.bound(client)    # Note the line
+   >>> fanfou.bound(client)    # note the line
    >>> 
    >>> body = {'page': 2, 'count': 20, 'mode': 'lite'}
    >>> resp = client.statuses.home_timeline()
-   >>> data = json.loads(resp.read())    # Python3: data = json.loads(resp.read().decode('utf8'))
+   >>> data = json.loads(resp.read())    # Python 3: data = json.loads(resp.read().decode('utf8'))
    >>> for item in data:
    >>>     print(item['text'])
    >>> 
@@ -139,7 +139,7 @@ More API details on `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFou
    >>> fanfou.bound(client)
    >>> 
    >>> resp = client.users.show()
-   >>> data = resp.json()    # Equal: data = json.loads(resp.read().decode('utf8')) 
+   >>> data = resp.json()    # equal: data = json.loads(resp.read().decode('utf8')) 
 
 In this update, you can get a Python object directly by using resp.json().
 
@@ -176,7 +176,7 @@ Sometimes you want to provide binary bytes instead of filename when you're writi
 
    >>> f = open('test.jpg')
    >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
-   >>> body, headers = fanfou.pack_image(args, binary=f.read())  # Note the line
+   >>> body, headers = fanfou.pack_image(args, binary=f.read())  # note the line
    >>> f.close()
    >>> resp = client.photos.upload(body, headers)
    >>> print(resp.code)
@@ -218,12 +218,12 @@ The line like *fanfou.print_api('plain')* but it will print all available method
 
 Your IDE (or editor) can autocomplete them after **fanfou.bound(client)**.
 
-auth class
-""""""""""
+auth classes
+""""""""""""
 
-The module provides the following classes to authorize:
+The __init__ method for auth classes is as follows:
 
-class **OAuth** (oauth_consumer, oauth_token={}, callback=None, auth_host='m.fanfou.com')
+class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None)
 
 class **XAuth** (oauth_consumer, username, password)
 
