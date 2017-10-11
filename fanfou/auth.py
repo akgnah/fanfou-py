@@ -14,7 +14,7 @@ from six.moves.urllib import request
 
 def oauth_escape(s):
     if not isinstance(s, six.binary_type):
-        s = str(s).encode('utf-8')
+        s = s.encode('utf-8')
     return parse.quote(s, safe='~')
 
 
@@ -93,7 +93,7 @@ class Auth(object):
             (headers['Content-Type'] == self.form_urlencoded) and base_args.update(args)
         else:
             base_args.update(args)
-            url = url + '?' + parse.urlencode(args) if args else url
+            url = url + '?' + oauth_query(args)
 
         self.oauth_token and base_args.update({'oauth_token': self.oauth_token['key']})
         base_args['oauth_signature'] = self.oauth_signature(url, method, base_args)
@@ -108,7 +108,10 @@ class Auth(object):
         else:
             data = None
 
-        return request.urlopen(req, data=data)
+        resp = request.urlopen(req, data=data)
+        resp.json = lambda: json.loads(resp.read().decode('utf8') or '""')
+
+        return resp
 
 
 class OAuth(Auth):
@@ -116,9 +119,7 @@ class OAuth(Auth):
         Auth.__init__(self, oauth_consumer, oauth_token, callback, auth_host)
 
     def request(self, url, method='GET', args={}, headers={}):
-        resp = self.oauth_request(url, method, args, headers)
-        resp.json = lambda: json.loads(resp.read().decode('utf8') or '""')
-        return resp
+        return self.oauth_request(url, method, args, headers)
 
     def request_token(self):
         resp = self.oauth_request(self.request_token_url, 'GET')
@@ -142,9 +143,7 @@ class XAuth(Auth):
         self.oauth_token = self.xauth(username, password)
 
     def request(self, url, method='GET', args={}, headers={}):
-        resp = self.oauth_request(url, method, args, headers)
-        resp.json = lambda: json.loads(resp.read().decode('utf8') or '""')
-        return resp
+        return self.oauth_request(url, method, args, headers)
 
     def xauth(self, username, password):
         args = {
