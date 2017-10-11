@@ -13,6 +13,8 @@ from six.moves.urllib import request
 
 
 def oauth_escape(s):
+    if isinstance(s, int):
+        s = str(s)
     if not isinstance(s, six.binary_type):
         s = s.encode('utf-8')
     return parse.quote(s, safe='~')
