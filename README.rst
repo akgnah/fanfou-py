@@ -1,6 +1,9 @@
 fanfou-py: a python oauth client for fanfou
 ===========================================
 
+.. image:: https://img.shields.io/travis/akgnah/fanfou-py/master.svg
+    :target: https://travis-ci.org/akgnah/fanfou-py
+
 .. image:: https://img.shields.io/pypi/v/fanfou.svg
     :target: https://pypi.python.org/pypi/fanfou
 
