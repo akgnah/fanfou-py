@@ -135,7 +135,7 @@ If you want to use style 2, you must **fanfou.bound(client)** before use. They h
 Just put all you want to request args to a dict (above is body), and then access a API. If you want to upload a photo, please see **pack_image**.
 More API details on `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_.
 
-**What's new in 0.1.10**
+**What's new in 0.1.12**
 
 .. code-block:: python
 

@@ -2,5 +2,5 @@ from fanfou.auth import OAuth, XAuth
 from fanfou.photo import pack_image
 from fanfou.api import bound, print_api
 
-__version__ = '0.1.10'
+__version__ = '0.1.12'
 __all__ = ['OAuth', 'XAuth', 'pack_image', 'bound', 'print_api']

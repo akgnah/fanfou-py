@@ -102,7 +102,7 @@ class Auth(object):
         req = request.Request(url, headers=headers)
 
         if headers.get('Content-Type') == self.form_urlencoded:
-            data = parse.urlencode(args).encode()
+            data = oauth_query(args).encode()
         elif 'form-data' in headers.get('Content-Type', ''):    # multipart/form-data
             data = args['form-data']
         else:
