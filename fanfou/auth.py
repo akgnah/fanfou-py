@@ -12,13 +12,13 @@ from six.moves.urllib import request
 # @home2 http://fanfou.com/home2
 
 
-def oauth_escape(s, via='quote'):
+def oauth_escape(s, via='quote', safe='~'):
     quote_via = getattr(parse, via)
     if isinstance(s, int):
         s = str(s)
     if not isinstance(s, six.binary_type):
         s = s.encode('utf-8')
-    return quote_via(s, safe='')
+    return quote_via(s, safe=safe)
 
 
 def oauth_timestamp():
@@ -29,8 +29,8 @@ def oauth_nonce(size=8):
     return ''.join([str(random.randint(0, 9)) for i in range(size)])
 
 
-def oauth_query(base_args, via='quote'):
-    return '&'.join('%s=%s' % (k, oauth_escape(v, via)) for k, v in sorted(base_args.items()))
+def oauth_query(args, via='quote', safe='~'):
+    return '&'.join('%s=%s' % (k, oauth_escape(v, via, safe)) for k, v in sorted(args.items()))
 
 
 def oauth_normalized_url(url):
@@ -86,7 +86,7 @@ class Auth(object):
             if ':' in url:
                 path, _ = url.split(':')
                 if args.get('id'):
-                    url = path + oauth_escape(args['id'], via='quote_plus')
+                    url = path + oauth_escape(args['id'], via='quote_plus', safe='')
                 else:
                     url = path[:-1]
             url = self.base_api_url % url
@@ -96,7 +96,7 @@ class Auth(object):
             (headers['Content-Type'] == self.form_urlencoded) and base_args.update(args)
         else:
             base_args.update(args)
-            url = url + '?' + oauth_query(args, via='quote_plus')
+            url = url + '?' + oauth_query(args, via='quote_plus', safe='')
 
         self.oauth_token and base_args.update({'oauth_token': self.oauth_token['key']})
         base_args['oauth_signature'] = self.oauth_signature(url, method, base_args)
@@ -105,7 +105,7 @@ class Auth(object):
         req = request.Request(url, headers=headers)
 
         if headers.get('Content-Type') == self.form_urlencoded:
-            data = oauth_query(args, via='quote_plus').encode()
+            data = oauth_query(args, via='quote_plus', safe='').encode()
         elif 'form-data' in headers.get('Content-Type', ''):  # multipart/form-data
             data = args['form-data']
         else:
