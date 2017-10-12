@@ -12,12 +12,13 @@ from six.moves.urllib import request
 # @home2 http://fanfou.com/home2
 
 
-def oauth_escape(s):
+def oauth_escape(s, safe='', via='quote'):
+    quote_via = getattr(parse, via)
     if isinstance(s, int):
         s = str(s)
     if not isinstance(s, six.binary_type):
         s = s.encode('utf-8')
-    return parse.quote_plus(s)
+    return quote_via(s, safe=safe)
 
 
 def oauth_timestamp():
@@ -85,7 +86,7 @@ class Auth(object):
             if ':' in url:
                 path, _ = url.split(':')
                 if args.get('id'):
-                    url = path + oauth_escape(args['id'])
+                    url = path + oauth_escape(args['id'], via='quote_plus')
                 else:
                     url = path[:-1]
             url = self.base_api_url % url
@@ -95,7 +96,7 @@ class Auth(object):
             (headers['Content-Type'] == self.form_urlencoded) and base_args.update(args)
         else:
             base_args.update(args)
-            url = url + '?' + oauth_query(args)
+            url = url + '?' + oauth_query(args, via='quote_plus')
 
         self.oauth_token and base_args.update({'oauth_token': self.oauth_token['key']})
         base_args['oauth_signature'] = self.oauth_signature(url, method, base_args)
@@ -104,7 +105,7 @@ class Auth(object):
         req = request.Request(url, headers=headers)
 
         if headers.get('Content-Type') == self.form_urlencoded:
-            data = oauth_query(args).encode()
+            data = oauth_query(args, via='quote_plus').encode()
         elif 'form-data' in headers.get('Content-Type', ''):  # multipart/form-data
             data = args['form-data']
         else:
