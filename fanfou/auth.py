@@ -12,13 +12,13 @@ from six.moves.urllib import request
 # @home2 http://fanfou.com/home2
 
 
-def oauth_escape(s, safe='', via='quote'):
+def oauth_escape(s, via='quote'):
     quote_via = getattr(parse, via)
     if isinstance(s, int):
         s = str(s)
     if not isinstance(s, six.binary_type):
         s = s.encode('utf-8')
-    return quote_via(s, safe=safe)
+    return quote_via(s, safe='')
 
 
 def oauth_timestamp():
@@ -29,8 +29,8 @@ def oauth_nonce(size=8):
     return ''.join([str(random.randint(0, 9)) for i in range(size)])
 
 
-def oauth_query(base_args):
-    return '&'.join('%s=%s' % (k, oauth_escape(v)) for k, v in sorted(base_args.items()))
+def oauth_query(base_args, via='quote'):
+    return '&'.join('%s=%s' % (k, oauth_escape(v, via)) for k, v in sorted(base_args.items()))
 
 
 def oauth_normalized_url(url):
