@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 import re
+import six
 import random
 import mimetypes
 from six.moves.urllib import request
+
+
+def encode(s):
+    if isinstance(s, int):
+        s = str(s)
+    if not isinstance(s, six.binary_type):
+        s = s.encode('utf-8')
+    return s
 
 
 def open_image(filename):
@@ -28,7 +37,7 @@ def pack_image(args, binary=None):
         body.append('Content-Type: text/plain; charset=US-ASCII')
         body.append('Content-Transfer-Encoding: 8bit')
         body.append('')
-        body.append(value)
+        body.append(encode(value))
     body.append('--' + BOUNDARY)
     body.append('Content-Disposition: form-data; name="%s"; filename="%s"' % (name, filename))
     body.append('Content-Type: %s' % mimetypes.guess_type(filename)[0])
@@ -46,6 +55,7 @@ def pack_image(args, binary=None):
         'Content-Type': 'multipart/form-data; boundary=' + BOUNDARY,
         'Content-Length': len(body)
     }
+
     return {'form-data': body}, headers
 
 
