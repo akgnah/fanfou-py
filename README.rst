@@ -10,6 +10,9 @@ fanfou-py: a python oauth client for fanfou
 .. image:: https://img.shields.io/pypi/l/fanfou.svg
     :target: https://pypi.python.org/pypi/fanfou
 
+.. image:: https://img.shields.io/badge/code_style-pep8-orange.svg
+    :target: https://www.python.org/dev/peps/pep-0008
+
 Installation
 ------------
 
