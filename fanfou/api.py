@@ -101,6 +101,7 @@ def signed(client, apis, func, method):
     def request(args={}, headers={}):
         url = '/{}/{}'.format(apis.__group__, func)
         return client.request(url, method, args, headers)
+
     setattr(apis, func, request)
     setattr(client, apis.__group__, apis)
 
@@ -126,6 +127,7 @@ def bound(client):
         for item in value:
             signed(client, apis, *item)
     fix_favorites(client)
+    return client
 
 
 def print_api(mode='plain'):

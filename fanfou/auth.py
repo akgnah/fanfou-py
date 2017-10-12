@@ -17,7 +17,7 @@ def oauth_escape(s):
         s = str(s)
     if not isinstance(s, six.binary_type):
         s = s.encode('utf-8')
-    return parse.quote(s, safe='~')
+    return parse.quote_plus(s)
 
 
 def oauth_timestamp():
@@ -32,7 +32,7 @@ def oauth_query(base_args):
     return '&'.join('%s=%s' % (k, oauth_escape(v)) for k, v in sorted(base_args.items()))
 
 
-def oauth_url(url):
+def oauth_normalized_url(url):
     return '%s://%s%s' % (parse.urlparse(url)[:3])
 
 
@@ -53,7 +53,7 @@ class Auth(object):
         return binascii.b2a_base64(hashed.digest())[:-1]
 
     def oauth_signature(self, url, method, base_args):
-        normalized_url = oauth_url(url)
+        normalized_url = oauth_normalized_url(url)
         query_items = oauth_query(base_args)
         base_elems = (method.upper(), normalized_url, query_items)
         base_string = '&'.join(oauth_escape(s) for s in base_elems)
@@ -105,14 +105,13 @@ class Auth(object):
 
         if headers.get('Content-Type') == self.form_urlencoded:
             data = oauth_query(args).encode()
-        elif 'form-data' in headers.get('Content-Type', ''):    # multipart/form-data
+        elif 'form-data' in headers.get('Content-Type', ''):  # multipart/form-data
             data = args['form-data']
         else:
             data = None
 
         resp = request.urlopen(req, data=data)
-        resp.json = lambda: json.loads(resp.read().decode('utf8') or '""')
-
+        resp.json = lambda: json.loads(resp.read().decode() or '""')
         return resp
 
 

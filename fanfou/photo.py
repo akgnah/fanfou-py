@@ -50,7 +50,7 @@ def pack_image(args, binary=None):
 
 
 '''
-args = {'photo': 'test.jpg', 'status': 'upload photo'}
+args = {'photo': 'test.jpg', 'status': 'upload a new photo'}
 body, headers = pack_image(args)
 client.request('/photos/upload', 'POST', body, headers)
 
