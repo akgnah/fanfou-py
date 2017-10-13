@@ -14,7 +14,7 @@ from six.moves.urllib import request
 
 def oauth_escape(s, via='quote', safe='~'):
     quote_via = getattr(parse, via)
-    if isinstance(s, int):
+    if isinstance(s, (int, float)):
         s = str(s)
     if not isinstance(s, six.binary_type):
         s = s.encode('utf-8')
