@@ -13,54 +13,42 @@ fanfou-py: a python oauth client for fanfou
 .. image:: https://img.shields.io/badge/code_style-pep8-orange.svg
     :target: https://www.python.org/dev/peps/pep-0008
 
-Demo
-----
-
-下面收集了一些使用 fanfou-py 的应用，可用作参考。
-
-   * `fanfou-m <https://github.com/akgnah/fanfou-m>`_ 饭否手机版复刻
-   * `fanfou-bot <https://github.com/akgnah/fanfou-bot>`_ Mr.Greting 和诗词君
-   * `road-tree <https://gist.github.com/akgnah/c76b3089170307df456b04673a525408>`_ 一路一树
-   * `Manzarek <https://github.com/fancoo/Manzarek>`_ 相亲bot
-   * `Wox.Plugin.Fanfou <https://github.com/LitoMore/Wox.Plugin.Fanfou>`_ A Wox plugin for Fanfou
-
-
-安装
-----
+Installation
+------------
 
 .. code-block:: bash
 
     $ sudo pip install fanfou
 
-使用
-----
+Usage
+-----
 
 .. code-block:: python
 
    >>> import fanfou
 
 
-步骤 1:  认证
+Step 1:  Authorize
 ^^^^^^^^^^^^^^^^^^
 
-这个模块提供了几种方式来认证，请查看 `Fanfou API OAuth <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Oauth>`_ 了解更多详情。
+The module provides several ways to authorize, see more details on `Fanfou API OAuth <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Oauth>`_.
 
-方式 1:
-""""""""
+Way 1:
+""""""
 
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
    >>> client = fanfou.OAuth(consumer)    # (1)(2)
    >>> request_token = client.request_token()
-   >>> print(client.authorize_url)    # 浏览这个 url 去认证
+   >>> print(client.authorize_url)    # browse the url to authorize
    >>> access_token = client.access_token()    # done
 
-(1). 默认 callback 是 '`http://localhost:8080`'。
+(1). The default callback is '`http://localhost:8080`'.
 
-(2). 默认的 authorize_url 是 '`http://m.fanfou.com/`...'， 你可以传递 auth_host='fanfou.com' 去更改它。
+(2). The default authorize_url is '`http://m.fanfou.com/`...', you can pass auth_host='fanfou.com' to change it.
 
-可能你会在其他页面处理 callback 过程，可以创建一个新的 client 用来获取 access_token，就像这样：
+Maybe you handling the callback elsewhere, create a new client and get access_token, like that:
 
 .. code-block:: python
 
@@ -70,52 +58,52 @@ Demo
    >>> client = fanfou.OAuth(consumer)
    >>> access_token = client.access_token(request_token)    # done
 
-方式 2:
-""""""""
+Way 2:
+""""""
 
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
    >>> client = fanfou.OAuth(consumer, callback='oob')
    >>> request_token = client.request_token()
-   >>> print(client.authorize_url)    # 浏览这个 url 并复制 verifier_code
+   >>> print(client.authorize_url)    # browse the url and copy verifier_code
    >>> verifier_code = 'your verifier_code'
    >>> access_token = client.access_token(oauth_verifier=verifier_code)    # done
 
-你同样可以创建一个新的 client 来获取 access_token，就像上面 方式 1 那样。
+You can also create a new client and get access_token, like the way 1 above.
 
-方式 3:
-""""""""
+Way 3:
+""""""
 
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
-   >>> access_token =  {'key': 'your key', 'secret': 'your secret'}    # access_token 是你之前保存的
+   >>> access_token =  {'key': 'your key', 'secret': 'your secret'}    # access_token is what you saved before
    >>> client = fanfou.OAuth(consumer, access_token)    # done
 
-方式 4:
-""""""""
+Way 4:
+""""""
 
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
    >>> client = fanfou.XAuth(consumer, 'username', 'password')    # done
-   >>> access_token = client.access_token()    # 可选, 如果你想保存 access_token
+   >>> access_token = client.access_token()    # optional, if you want to save access_token
 
 
-步骤 2: 访问 API
+Step 2: Access API
 ^^^^^^^^^^^^^^^^^^
 
-我们假设你已经通过 步骤 1 取得了 client，现在你有两种访问 API 的风格可选择。
+We assume that you've got client on Step 1, now you have two styles to access API.
 
-风格 1:
+Style 1:
 """"""""
 
 .. code-block:: python
 
    >>> import json
    >>> 
-   >>> resp = client.request('/statuses/home_timeline', 'GET')  # resp 是一个 HTTPResponse 实例
+   >>> resp = client.request('/statuses/home_timeline', 'GET')  # resp is a HTTPResponse instance
    >>> print(resp.code)
    >>> data = json.loads(resp.read())    # Python 3: data = json.loads(resp.read().decode('utf8'))
    >>> for item in data:
@@ -126,14 +114,14 @@ Demo
    >>> print(resp.code)
 
 
-风格 2:
+Style 2:
 """"""""
 
 .. code-block:: python
 
    >>> import json
    >>>  
-   >>> fanfou.bound(client)    # 请留意这一行
+   >>> fanfou.bound(client)    # note the line
    >>> 
    >>> body = {'page': 2, 'count': 20, 'mode': 'lite'}
    >>> resp = client.statuses.home_timeline()
@@ -145,32 +133,31 @@ Demo
    >>> resp = client.statuses.update(body)
    >>> print(resp.code)
 
-如果你想使用 风格 2，在使用之前，你必须先执行 **fanfou.bound(client)**。两种风格具体同样效果，只是不同的风格而已。
+If you want to use style 2, you must **fanfou.bound(client)** before use. They have the same effect, just two different styles.
 
-只需把你想要请求的参数放到一个字典中（上面是 body），接着把这个字典作为参数去访问 API。如果你想上传图片，请看 **pack_image** 小节。
-更多 API 细节（包括每个 API 访问方法和可用参数）可查看 `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_。
+Just put all you want to request args to a dict (above is body), and then access a API. If you want to upload a photo, please see **pack_image**.
+More API details on `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_.
 
-
-**有什么新的东西在 0.2.x 版本**
+**What's new in 0.2.x**
 
 .. code-block:: python
 
    >>> fanfou.bound(client)
    >>> 
    >>> resp = client.users.show()
-   >>> data = resp.json()    # 等价于: data = json.loads(resp.read().decode('utf8')) 
+   >>> data = resp.json()    # equal: data = json.loads(resp.read().decode('utf8')) 
 
-在这个更新中，你可以直接得到一个 Python 对象通过使用 resp.json()。
+In this update, you can get a Python object directly by using resp.json().
 
 
-更多细节
+More details
 ^^^^^^^^^^^^
 
 pack_image(args, binary=None)
 """""""""""""""""""""""""""""
 
-在 API  `/account/update_profile_image <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/account.update-profile-image>`_
-和 `/photos/upload <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/photos.upload>`_ 中，你需要上传一个图片, **pack_image** 可以帮你简化这些工作。
+On `/account/update_profile_image <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/account.update-profile-image>`_
+and `/photos/upload <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/photos.upload>`_ you need to upload a image, **pack_image** can help you work easily.
 
 .. code-block:: python
 
@@ -187,15 +174,15 @@ pack_image(args, binary=None)
    >>> resp = client.photos.upload(body, headers)
    >>> print(resp.code)
 
-只需把文件名和他参数放到 args 中，pack_image 它，然后就可以访问 API 了。图片文件可以是本地文件或网络文件， pack_image 会自动读取它。
+Just put the filename in the args, then pack_image it, and then you can access API. The image file can be local or network file, pack_image will auto read it.
 
-当你在写一个 Web 应用的时候（就像 `m.setq.me <http://m.setq.me>`_），你可能想要提供一个二进制文件来代替文件名，因为你从表单获取的数据是二进制的。
+Sometimes you want to provide binary bytes instead of filename when you're writing a webapp, because the data you get from the form is binary. (like `m.setq.me <http://m.setq.me>`_)
 
 .. code-block:: python
 
    >>> f = open('test.jpg')
    >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
-   >>> body, headers = fanfou.pack_image(args, binary=f.read())  # 请留意这一行
+   >>> body, headers = fanfou.pack_image(args, binary=f.read())  # note the line
    >>> f.close()
    >>> resp = client.photos.upload(body, headers)
    >>> print(resp.code)
@@ -204,19 +191,18 @@ pack_image(args, binary=None)
 print_api('plain')
 """"""""""""""""""
 
-下面的代码会打印全部的你可以传递给 client.request 的 api_access_url：
+The following code print all api_access_url that be allowed pass to client.request:
 
 .. code-block:: python
 
    >>> fanfou.print_api('plain')
 
-如果你输入了上面的代码并细心查看它的结果，你会发现有两个 api_access_url 有  *'/:id'*，它们是：
+If you type the line and watch the results carefully, you will find two api_access_url have *'/:id'*, they are:
 
 * `POST /favorites/destroy <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/favorites.destroy>`_
 * `POST /favorites/create <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/favorites.create>`_
 
-因为这两个 API 需要 *id* 在它们的 access_url，所以我们会从 body 取得它并替换 :id，就像这样：
-
+Because these API need *id* on it's access_url, so we get id from body and replace :id, like that:
 
 .. code-block:: python
 
@@ -224,7 +210,8 @@ print_api('plain')
    >>> resp = client.request('/favorites/create/:id', 'POST', body)
    >>> print(resp.url)
 
-你会看到 resp.url 变成了 http://api.fanfou.com/favorites/create/zFbiu4CsJrw.json （忘了提，'.json' 会自动加到 access_url 的尾部）。
+You will see resp.url is http://api.fanfou.com/favorites/create/zFbiu4CsJrw.json (Forget to mention that '.json' will add to the access_url).
+
 
 print_api('bound')
 """"""""""""""""""
@@ -233,19 +220,22 @@ print_api('bound')
 
    >>> fanfou.print_api('bound')
 
-这行代码和 *fanfou.print_api('plain')* 相似，但它会打印全部可用的方法（风格 2），就像 client.statuses.home_timeline。
-你的 IED （或编辑器）能自动补全这些方法，在你执行了 **fanfou.bound(client)** 之后。
+The line like *fanfou.print_api('plain')* but it will print all available methods that like client.statuses.home_timeline.
+
+Your IDE (or editor) can autocomplete them after **fanfou.bound(client)**.
 
 auth classes
 """"""""""""
 
-两个 Auth 类的 __init__ 方法如下：
+The __init__ method for auth classes is as follows:
 
 class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None)
 
 class **XAuth** (oauth_consumer, username, password)
 
-致谢
+Thanks
 ------
 
-感谢 `饭否 <http://fanfou.com>`_ 并且感谢你的关注。如果你有任何问题，我在这里 `@home2 <http://fanfou.com/home2>`_。
+Thank `Fanfou <http://fanfou.com>`_ and thank you for tolerating  my poor English.
+
+If you have any questions, I am here `@home2 <http://fanfou.com/home2>`_.
