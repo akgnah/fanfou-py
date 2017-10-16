@@ -19,9 +19,9 @@ Demo
 下面收集了一些使用 fanfou-py 的应用，可用作参考。
 
    * `fanfou-m <https://github.com/akgnah/fanfou-m>`_ 饭否手机版复刻
-   * `fanfou-bot <https://github.com/akgnah/fanfou-bot>`_ Mr.Greting 和诗词君
+   * `fanfou-bot <https://github.com/akgnah/fanfou-bot>`_ Mr.Greeting 和诗词君
    * `road-tree <https://gist.github.com/akgnah/c76b3089170307df456b04673a525408>`_ 一路一树
-   * `Manzarek <https://github.com/fancoo/Manzarek>`_ 相亲bot
+   * `Manzarek <https://github.com/fancoo/Manzarek>`_ 相亲 bot
    * `Wox.Plugin.Fanfou <https://github.com/LitoMore/Wox.Plugin.Fanfou>`_ A Wox plugin for Fanfou
 
 
