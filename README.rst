@@ -25,6 +25,9 @@ Demo
    * `Wox.Plugin.Fanfou <https://github.com/LitoMore/Wox.Plugin.Fanfou>`_ A Wox plugin for Fanfou
 
 
+循序渐进的饭否机器人教程： `oh-my-robot <https://setq.me/512>`_
+
+
 安装
 ----
 
@@ -58,7 +61,7 @@ Demo
 
 (1). 默认 callback 是 '`http://localhost:8080`'。
 
-(2). 默认的 authorize_url 是 '`http://m.fanfou.com/`...'， 你可以传递 auth_host='fanfou.com' 去更改它。
+(2). 默认的 authorize_url 是 '`m.fanfou.com/`...'，你可以传递 auth_host='fanfou.com' 去更改它。
 
 可能你会在其他页面处理 callback 过程，可以创建一个新的 client 用来获取 access_token，就像这样：
 
@@ -101,6 +104,18 @@ Demo
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
    >>> client = fanfou.XAuth(consumer, 'username', 'password')    # done
    >>> access_token = client.access_token()    # 可选, 如果你想保存 access_token
+
+使用 https:
+""""""""""""
+
+在最新的版本中，你可以使用 https 向饭否 API 发送请求，指定 fake_https 为真即可：
+
+.. code-block:: python
+
+   >>> consumer = {'key': 'your key', 'secret': 'your secret'}
+   >>> client = fanfou.XAuth(consumer, 'username', 'password', fake_https=True)
+
+fake_https 选项在上面的 4 种认证方式中均可用。使用 fake_https 这个名字的原因是，目前饭否 API 服务器 https 还有点小问题，需要手动修改 base_string。在将来饭否修复了这一问题后，我们将会使用 https 而不是 fake_https。
 
 
 步骤 2: 访问 API
@@ -241,9 +256,9 @@ auth classes
 
 两个 Auth 类的 __init__ 方法如下：
 
-class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None)
+class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, fake_https=False)
 
-class **XAuth** (oauth_consumer, username, password)
+class **XAuth** (oauth_consumer, username, password, https=False, fake_https=False)
 
 致谢
 ------

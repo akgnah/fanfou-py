@@ -46,7 +46,7 @@ Way 1:
 
 (1). The default callback is '`http://localhost:8080`'.
 
-(2). The default authorize_url is '`http://m.fanfou.com/`...', you can pass auth_host='fanfou.com' to change it.
+(2). The default authorize_url is '`m.fanfou.com/`...', you can pass auth_host='fanfou.com' to change it.
 
 Maybe you handling the callback elsewhere, create a new client and get access_token, like that:
 
@@ -89,6 +89,19 @@ Way 4:
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
    >>> client = fanfou.XAuth(consumer, 'username', 'password')    # done
    >>> access_token = client.access_token()    # optional, if you want to save access_token
+
+
+Using https:
+""""""""""""
+
+In the lastest edition, you can using https like that:
+
+.. code-block:: python
+
+   >>> consumer = {'key': 'your key', 'secret': 'your secret'}
+   >>> client = fanfou.XAuth(consumer, 'username', 'password', fake_https=True)
+
+The fake_https is available in all authorize ways.
 
 
 Step 2: Access API
@@ -229,9 +242,9 @@ auth classes
 
 The __init__ method for auth classes is as follows:
 
-class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None)
+class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, fake_https=False)
 
-class **XAuth** (oauth_consumer, username, password)
+class **XAuth** (oauth_consumer, username, password, https=False, fake_https=False)
 
 Thanks
 ------
