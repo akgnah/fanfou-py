@@ -151,7 +151,7 @@ fake_https 选项在上面的 4 种认证方式中均可用。使用 fake_https 
    >>> fanfou.bound(client)    # 请留意这一行
    >>> 
    >>> body = {'page': 2, 'count': 20, 'mode': 'lite'}
-   >>> resp = client.statuses.home_timeline()
+   >>> resp = client.statuses.home_timeline(body)
    >>> data = json.loads(resp.read())    # Python 3: data = json.loads(resp.read().decode('utf8'))
    >>> for item in data:
    >>>     print(item['text'])
@@ -208,7 +208,7 @@ pack_image(args, binary=None)
 
 .. code-block:: python
 
-   >>> f = open('test.jpg')
+   >>> f = open('test.jpg', 'rb')
    >>> args = {'photo': 'test.jpg', 'status': 'upload local photo'}
    >>> body, headers = fanfou.pack_image(args, binary=f.read())  # 请留意这一行
    >>> f.close()
