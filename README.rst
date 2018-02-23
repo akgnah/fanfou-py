@@ -268,4 +268,4 @@ class **XAuth** (oauth_consumer, username, password, https=False, fake_https=Fal
 许可证
 ------
 
-MIT © [akgnah](https://github.com/akgnah)
+MIT © `akgnah <https://github.com/akgnah>`_
