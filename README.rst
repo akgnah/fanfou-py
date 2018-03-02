@@ -264,3 +264,8 @@ class **XAuth** (oauth_consumer, username, password, https=False, fake_https=Fal
 ------
 
 感谢 `饭否 <http://fanfou.com>`_ 并且感谢你的关注。如果你有任何问题，我在这里 `@home2 <http://fanfou.com/home2>`_。
+
+许可证
+------
+
+MIT © `akgnah <https://github.com/akgnah>`_

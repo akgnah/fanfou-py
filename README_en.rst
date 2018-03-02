@@ -252,3 +252,8 @@ Thanks
 Thank `Fanfou <http://fanfou.com>`_ and thank you for tolerating  my poor English.
 
 If you have any questions, I am here `@home2 <http://fanfou.com/home2>`_.
+
+License
+------
+
+MIT © `akgnah <https://github.com/akgnah>`_
