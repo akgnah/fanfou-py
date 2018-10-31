@@ -33,7 +33,7 @@ Demo
 
 .. code-block:: bash
 
-    $ sudo pip install fanfou
+    $ pip install fanfou
 
 使用
 ----
@@ -163,7 +163,7 @@ fake_https 选项在上面的 4 种认证方式中均可用。使用 fake_https 
 如果你想使用 风格 2，在使用之前，你必须先执行 **fanfou.bound(client)**。两种风格具体同样效果，只是不同的风格而已。
 
 只需把你想要请求的参数放到一个字典中（上面是 body），接着把这个字典作为参数去访问 API。如果你想上传图片，请看 **pack_image** 小节。
-更多 API 细节（包括每个 API 访问方法和可用参数）可查看 `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_。
+更多 API 细节（包括每个 API 访问方法和可用参数）可查看 `Fanfou API Apicategory <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Apicategory>`_ 。
 
 
 **有什么新的东西在 0.2.x 版本**
@@ -204,7 +204,7 @@ pack_image(args, binary=None)
 
 只需把文件名和他参数放到 args 中，pack_image 它，然后就可以访问 API 了。图片文件可以是本地文件或网络文件， pack_image 会自动读取它。
 
-当你在写一个 Web 应用的时候（就像 `m.setq.me <http://m.setq.me>`_），你可能想要提供一个二进制文件来代替文件名，因为你从表单获取的数据是二进制的。
+当你在写一个 Web 应用的时候（就像 `m.setq.me <https://m.setq.me>`_ ），你可能想要提供一个二进制文件来代替文件名，因为你从表单获取的数据是二进制的。
 
 .. code-block:: python
 
@@ -263,7 +263,7 @@ class **XAuth** (oauth_consumer, username, password, https=False, fake_https=Fal
 致谢
 ------
 
-感谢 `饭否 <http://fanfou.com>`_ 并且感谢你的关注。如果你有任何问题，我在这里 `@home2 <http://fanfou.com/home2>`_。
+感谢 `饭否 <http://fanfou.com>`_ 并且感谢你的关注。如果你有任何问题，我在这里 `@home2 <http://fanfou.com/home2>`_ 。
 
 许可证
 ------

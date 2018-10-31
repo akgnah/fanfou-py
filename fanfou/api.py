@@ -149,5 +149,5 @@ def print_api(mode='plain'):
 
 if __name__ == '__main__':
     print_api('plain')
-    print()
+    print('=========')
     print_api('bound')

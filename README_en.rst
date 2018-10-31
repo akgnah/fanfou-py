@@ -18,7 +18,7 @@ Installation
 
 .. code-block:: bash
 
-    $ sudo pip install fanfou
+    $ pip install fanfou
 
 Usage
 -----
@@ -189,7 +189,7 @@ and `/photos/upload <https://github.com/FanfouAPI/FanFouAPIDoc/wiki/photos.uploa
 
 Just put the filename in the args, then pack_image it, and then you can access API. The image file can be local or network file, pack_image will auto read it.
 
-Sometimes you want to provide binary bytes instead of filename when you're writing a webapp, because the data you get from the form is binary. (like `m.setq.me <http://m.setq.me>`_)
+Sometimes you want to provide binary bytes instead of filename when you're writing a webapp, because the data you get from the form is binary. (like `m.setq.me <https://m.setq.me>`_)
 
 .. code-block:: python
 
