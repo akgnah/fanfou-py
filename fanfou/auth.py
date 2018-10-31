@@ -111,7 +111,7 @@ class Auth(object):
 
         if headers.get('Content-Type') == self.form_urlencoded:
             data = oauth_query(args, via='quote_plus', safe='').encode()
-        elif headers.get('Content-Type') == 'multipart/form-data':
+        elif 'multipart/form-data' in headers.get('Content-Type', ''):
             data = args['form-data']
         else:  # GET
             data = None
