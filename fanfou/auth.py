@@ -3,6 +3,7 @@ import six
 import hmac
 import json
 import time
+import types
 import random
 import hashlib
 import binascii
@@ -33,36 +34,36 @@ def oauth_query(args, via='quote', safe='~'):
     return '&'.join('%s=%s' % (k, oauth_escape(v, via, safe)) for k, v in sorted(args.items()))
 
 
-def oauth_normalized_url(url, fake_https):
+def oauth_normalized_url(url):
     scheme, netloc, path = parse.urlparse(url)[:3]
-    if fake_https:
-        scheme = 'http'
     return '{0}://{1}{2}'.format(scheme, netloc, path)
 
 
 class Auth(object):
-    def __init__(self, oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, fake_https=False):
+    def __init__(self, oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, hooks={}):
         self.oauth_consumer = oauth_consumer
         self.oauth_token = oauth_token or {}
         self.callback = callback or 'http://localhost:8080/callback'
         self.form_urlencoded = 'application/x-www-form-urlencoded'
-        self.fake_https = fake_https and not https
-        self.scheme = 'https' if (fake_https or https) else 'http'
+        self.scheme = 'https' if https else 'http'
         self.auth_host = '{0}://{1}'.format(self.scheme, auth_host or 'm.fanfou.com')
         self.base_api_url = '{0}://api.fanfou.com%s.json'.format(self.scheme)
         self.access_token_url = '{0}://fanfou.com/oauth/access_token'.format(self.scheme)
         self.request_token_url = '{0}://fanfou.com/oauth/request_token'.format(self.scheme)
         self.authorize_url = parse.urljoin(self.auth_host, '/oauth/authorize?oauth_token=%s&oauth_callback=%s')
+        self.hooks = hooks
 
     def HMAC_SHA1(self, keys_string, base_string):
         hashed = hmac.new(keys_string.encode(), base_string.encode(), hashlib.sha1)
         return binascii.b2a_base64(hashed.digest())[:-1]
 
     def oauth_signature(self, url, method, base_args):
-        normalized_url = oauth_normalized_url(url, self.fake_https)
+        normalized_url = oauth_normalized_url(url)
         query_items = oauth_query(base_args)
         base_elems = (method.upper(), normalized_url, query_items)
         base_string = '&'.join(oauth_escape(s) for s in base_elems)
+        if type(self.hooks.get('base_string')) is types.FunctionType:
+            base_string = self.hooks['base_string'](base_string)
         keys_elems = (self.oauth_consumer['secret'], self.oauth_token.get('secret', ''))
         keys_string = '&'.join(oauth_escape(s) for s in keys_elems)
         return self.HMAC_SHA1(keys_string, base_string)
@@ -122,8 +123,8 @@ class Auth(object):
 
 
 class OAuth(Auth):
-    def __init__(self, oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, fake_https=False):
-        Auth.__init__(self, oauth_consumer, oauth_token, callback, auth_host, https, fake_https)
+    def __init__(self, oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, hooks={}):
+        Auth.__init__(self, oauth_consumer, oauth_token, callback, auth_host, https, hooks)
 
     def request(self, url, method='GET', args={}, headers={}):
         return self.oauth_request(url, method, args, headers)
@@ -145,8 +146,8 @@ class OAuth(Auth):
 
 
 class XAuth(Auth):
-    def __init__(self, oauth_consumer, username, password, https=False, fake_https=False):
-        Auth.__init__(self, oauth_consumer, https=https, fake_https=fake_https)
+    def __init__(self, oauth_consumer, username, password, https=False, hooks={}):
+        Auth.__init__(self, oauth_consumer, https=https, hooks=hooks)
         self.oauth_token = self.xauth(username, password)
 
     def request(self, url, method='GET', args={}, headers={}):

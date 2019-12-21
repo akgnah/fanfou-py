@@ -108,14 +108,14 @@ Demo
 使用 https:
 """"""""""""
 
-在最新的版本中，你可以使用 https 向饭否 API 发送请求，指定 fake_https 为真即可：
+在最新的版本中，你可以使用 https 向饭否 API 发送请求，指定 https 为 True 还需要使用 hooks 来修改一下 base string：
 
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
-   >>> client = fanfou.XAuth(consumer, 'username', 'password', fake_https=True)
+   >>> client = fanfou.XAuth(consumer, 'username', 'password', https=True, hooks={'base_string': lambda s: s.replace('https', 'http')})
 
-fake_https 选项在上面的 4 种认证方式中均可用。使用 fake_https 这个名字的原因是，目前饭否 API 服务器 https 还有点小问题，需要手动修改 base_string。在将来饭否修复了这一问题后，我们将会使用 https 而不是 fake_https。
+hooks 选项在上面的 4 种认证方式中均可用。使用 hooks 这个名字的原因是，目前饭否 HTTPS API 在校验 base string 时使用的仍是 http 的 URL，因此需要手动修改 base_string。
 
 
 步骤 2: 访问 API
@@ -256,9 +256,9 @@ auth classes
 
 两个 Auth 类的 __init__ 方法如下：
 
-class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, fake_https=False)
+class **OAuth** (oauth_consumer, oauth_token=None, callback=None, auth_host=None, https=False, hooks={})
 
-class **XAuth** (oauth_consumer, username, password, https=False, fake_https=False)
+class **XAuth** (oauth_consumer, username, password, https=False, hooks={})
 
 致谢
 ------
