@@ -99,7 +99,7 @@ In the lastest edition, you can using https like this below:
 .. code-block:: python
 
    >>> consumer = {'key': 'your key', 'secret': 'your secret'}
-   >>> client = fanfou.XAuth(consumer, 'username', 'password', https=True, hooks={'base_string': lambda s: s.replace('https', 'http'})
+   >>> client = fanfou.XAuth(consumer, 'username', 'password', https=True, hooks={'base_string': lambda s: s.replace('https', 'http')})
 
 The hooks parameter is available in all authorize ways.
 
